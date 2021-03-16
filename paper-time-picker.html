@@ -103,7 +103,6 @@ If you include this element as part of `paper-dialog`, use the class
         height: 96px;
         padding: 0 48px;
         @apply --layout-horizontal;
-        @apply --layout-end-justified;
       }
       :host([enable-seconds][narrow]) #heading {
         padding: 0 16px;
@@ -177,6 +176,50 @@ If you include this element as part of `paper-dialog`, use the class
       }
       .clock-animatable{
         @apply --layout-fit;
+      }
+
+      @media all and (min-width: 0) and (max-width: 460px) {
+        :host([narrow]) #heading {
+          height: 96px;
+          padding: 0 0;
+        }
+
+        :host([narrow]) #clockArea {
+          padding: 0;
+        }
+      }
+
+      @media all and (min-width: 0) and (max-width: 319px) {
+        :host([narrow]) #timePicker {
+          width: 146px;
+          height: 258px;
+        }
+
+        :host([narrow]) #timePicker #heading .time {
+          font-size: 32px;
+        }
+      }
+
+      @media all and (min-width: 320px) and (max-width: 380px) {
+        :host([narrow]) #timePicker {
+          width: 192px;
+          height: 338px;
+        }
+
+        :host([narrow]) #timePicker #heading .time {
+          font-size: 48px;
+        }
+      }
+
+      @media all and (min-width: 381px) and (max-width: 460px) {
+        :host([narrow]) #timePicker {
+          width: 242px;
+          height: 428px;
+        }
+
+        :host([narrow]) #timePicker #heading .time {
+          font-size: 52px;
+        }
       }
     </style>
     <iron-media-query query="{{_getMediaQuery(forceNarrow, responsiveWidth)}}"
