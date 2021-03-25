@@ -221,6 +221,16 @@ If you include this element as part of `paper-dialog`, use the class
           font-size: 52px;
         }
       }
+
+      @media all and (min-width: 461px) and (max-width: 620px) {
+        :host {
+          padding: 0 20px;
+        }
+
+        :host #timePicker {
+          width: 450px;
+        }
+      }
     </style>
     <iron-media-query query="{{_getMediaQuery(forceNarrow, responsiveWidth)}}"
       query-matches="{{_queryMatches}}"></iron-media-query>
