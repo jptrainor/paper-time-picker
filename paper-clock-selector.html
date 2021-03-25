@@ -159,6 +159,14 @@
             type: Boolean,
             value: false,
           },
+
+          _isClipBroken: {
+            type: Boolean,
+            value: function() {
+              // Safari and WkWebView are both broken
+              return /Apple/.test(navigator.vendor);
+            }
+          }
         },
         observers: [
           '_populate(count, step, useZero, _instanceId)',
@@ -333,9 +341,11 @@
             dom.text.setAttributeNS(null, 'x', number.x);
             dom.text.setAttributeNS(null, 'y', number.y);
             dom.text.textContent  = this._formatNumber(number.value);
-            dom.textClipped.setAttributeNS(null, 'x', number.x);
-            dom.textClipped.setAttributeNS(null, 'y', number.y);
-            dom.textClipped.textContent = this._formatNumber(number.value);
+            if (!this._isClipBroken) {
+              dom.textClipped.setAttributeNS(null, 'x', number.x);
+              dom.textClipped.setAttributeNS(null, 'y', number.y);
+              dom.textClipped.textContent = this._formatNumber(number.value);
+            }
           }
         },
         _createNumberElement: function(number) {
@@ -362,10 +372,12 @@
             text = create('text');
             text.textContent = number.label;
             g.appendChild(text);
-            textClipped = create('text', ['clipped']);
-            textClipped.textContent = number.label;
-            textClipped.setAttribute("clip-path", "url(#handClip" + this._instanceId + ")");
-            g.appendChild(textClipped);
+            if (!this._isClipBroken) {
+              textClipped = create('text', ['clipped']);
+              textClipped.textContent = number.label;
+              textClipped.setAttribute("clip-path", "url(#handClip" + this._instanceId + ")");
+              g.appendChild(textClipped);
+            }
           }
 
           return {g: g, text: text, textClipped: textClipped};
