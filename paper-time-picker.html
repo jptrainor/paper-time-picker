@@ -391,6 +391,13 @@ If you include this element as part of `paper-dialog`, use the class
             type: Boolean,
             value: false,
           },
+          /**
+           * Whether or not to automatically change to minutes after hour is selected, and seconds after minute.
+           */
+          autoShowNextView: {
+            type: Boolean,
+            value: false
+          },
           _queryMatches: {
             type: Boolean,
             value: false,
@@ -578,6 +585,11 @@ If you include this element as part of `paper-dialog`, use the class
           }.bind(this));
         },
         _onClockSelected: function(event) {
+
+          if (!this.autoShowNextView) {
+            return;
+          }
+
           if (this.view === 'hours') {
             var showMinutes = function() {
               this.async(function() {
