@@ -256,16 +256,19 @@ If you include this element as part of `paper-dialog`, use the class
             entry-animation="fade-in-animation" exit-animation="fade-out-animation">
             <neon-animatable class="clock-animatable" name="hours">
               <paper-clock-selector class="clock" id="hourClock" count="12" step="1"
-                animated="[[animated]]" selected="{{hour12}}"></paper-clock-selector>
+                animated="[[animated]]" animation-duration="[[animationDuration]]"
+                selected="{{hour12}}"></paper-clock-selector>
             </neon-animatable>
             <neon-animatable class="clock-animatable" name="minutes">
               <paper-clock-selector class="clock" id="minuteClock" count="60" step="5"
-                animated="[[animated]]" use-zero zero-pad selected="{{minute}}"></paper-clock-selector>
+                animated="[[animated]]" animation-duration="[[animationDuration]]"
+                use-zero zero-pad selected="{{minute}}"></paper-clock-selector>
             </neon-animatable>
             <template is="dom-if" if="[[ enableSeconds ]]">
               <neon-animatable class="clock-animatable" name="seconds">
                 <paper-clock-selector class="clock" id="secondClock" count="60" step="5"
-                  animated="[[animated]]" use-zero zero-pad selected="{{second}}"></paper-clock-selector>
+                  animated="[[animated]]" animation-duration="[[animationDuration]]"
+                  use-zero zero-pad selected="{{second}}"></paper-clock-selector>
               </neon-animatable>
             </template>
           </neon-animated-pages>
@@ -398,6 +401,17 @@ If you include this element as part of `paper-dialog`, use the class
             type: Boolean,
             value: false
           },
+
+          animationDuration: {
+            type: Number,
+            value: 300,
+          },
+
+          viewTransitionDelay: {
+            type: Number,
+            value: 200
+          },
+
           _queryMatches: {
             type: Boolean,
             value: false,
@@ -560,9 +574,7 @@ If you include this element as part of `paper-dialog`, use the class
         _viewChanged: function(toView, fromView) {
           this.$.pages._notifyPageResize();
 
-          // prevent the clock-hand transition when selecting, otherwise the
-          // extra movement would be confusing
-          if (this._selecting || !fromView || !toView || !this.animated) {
+          if (!fromView || !toView || !this.animated) {
             return;
           }
 
@@ -580,7 +592,7 @@ If you include this element as part of `paper-dialog`, use the class
             to.setClockHand(toAngle, true, function() {
               this.async(function() {
                 from.setClockHand(fromAngle, false);
-              }, 200);
+              }, 2*this.animationDuration + this.viewTransitionDelay);
             }.bind(this));
           }.bind(this));
         },
@@ -593,10 +605,8 @@ If you include this element as part of `paper-dialog`, use the class
           if (this.view === 'hours') {
             var showMinutes = function() {
               this.async(function() {
-                this._selecting = true;
                 this.view = 'minutes';
-                this._selecting = false;
-              }.bind(this), 100);
+              }.bind(this), this.animationDuration + this.viewTransitionDelay);
               this.$.hourClock.removeEventListener('paper-clock-transition-end', showMinutes);
             }.bind(this);
 
@@ -616,10 +626,8 @@ If you include this element as part of `paper-dialog`, use the class
 
             var showSeconds = function() {
               this.async(function() {
-                this._selecting = true;
                 this.view = 'seconds';
-                this._selecting = false;
-              }.bind(this), 100);
+              }.bind(this), this.animationDuration + this.viewTransitionDelay);
               this.$.minuteClock.removeEventListener('paper-clock-transition-end', showSeconds);
             }.bind(this);
 
